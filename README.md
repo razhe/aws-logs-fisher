@@ -22,7 +22,13 @@ Desktop app (Electron) for reviewing the CloudWatch logs of anything deployed on
 - A profile in `~/.aws/config`; the SAML login writes the credentials there.
 - Region: the app uses your profile's region (`aws configure get region`). If it has none, pick one in the header selector (it is remembered).
 
-## Installation and usage
+## Download
+
+Grab `AWS-Logs-Fisher-<version>-portable.exe` from the [Releases](https://github.com/razhe/aws-logs-fisher/releases) page and run it; no installation needed. You still need the AWS CLI and `saml2aws` installed (see Requirements).
+
+The executable is not code-signed, so Windows SmartScreen may warn you: click **More info → Run anyway**.
+
+## Run from source
 
 ```bash
 git clone https://github.com/razhe/aws-logs-fisher.git
@@ -43,6 +49,14 @@ Per-tab memory limits: 20,000 log lines (trimmed to the most recent 15,000) and 
 ```bash
 npm test
 ```
+
+## Building a release
+
+```bash
+npm run dist
+```
+
+This produces `dist/AWS-Logs-Fisher-<version>-portable.exe` (Windows, x64). To publish it: bump `version` in `package.json`, commit, then create a release on GitHub with a `v<version>` tag and attach the `.exe`.
 
 ## Security and privacy
 
