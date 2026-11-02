@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Fondo app de escritorio / Dark Mode -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Gradiente neón para la cuerda/sedal -->
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <!-- Efectos de sombra y resplandor -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base del Ícono de App (Squircle) -->
+  <rect x="32" y="32" width="448" height="448" rx="100" ry="100" fill="url(#bgGrad)" filter="url(#shadow)" stroke="#334155" stroke-width="3" />
+
+  <!-- Grupo ajustado para centrar perfectamente la nube y la caña dentro del contenedor -->
+  <g transform="translate(-19, -24.5) scale(1.18)">
+
+    <!-- Nube Minimalista de Fondo (Entorno Cloud) -->
+    <path d="M 105 320 
+             H 325 
+             A 42 42 0 0 0 363 240 
+             A 55 55 0 0 0 255 185 
+             A 60 60 0 0 0 140 240 
+             A 38 38 0 0 0 105 320 Z" fill="none" stroke="#B4C0D0" stroke-width="7.5" stroke-dasharray="15 9" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Caña de Pescar Minimalista -->
+    <path d="M 80 345 L 295 130" fill="none" stroke="#E8EDF3" stroke-width="12" stroke-linecap="round" filter="url(#shadow)" />
+
+    <!-- Cuerda / Sedal con la vuelta ligera -->
+    <path d="M 295 130 
+             C 385 130, 395 270, 265 248
+             C 235 240, 205 200, 222 182
+             C 239 164, 265 192, 225 218" fill="none" stroke="#00D9FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+
+    <!-- Anzuelo ubicado en el centro exacto de la nube -->
+    <g transform="translate(-32, -18)">
+      <!-- Ojo del anzuelo -->
+      <circle cx="260" cy="235" r="3.5" fill="none" stroke="#FFFFFF" stroke-width="2.5" />
+      
+      <!-- Cuerpo y Curva del Anzuelo -->
+      <path d="M 260 238 
+               V 292 
+               A 17 17 0 0 1 226 292 
+               V 272 
+               L 220 280" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)" />
+    </g>
+
+  </g>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect x="32" y="32" width="448" height="448" rx="100" ry="100" fill="url(#bgGrad)" stroke="#6D84A6" stroke-width="12" />
+
+  <g transform="translate(-19, -24.5) scale(1.18)">
+    <path d="M 105 320
+             H 325
+             A 42 42 0 0 0 363 240
+             A 55 55 0 0 0 255 185
+             A 60 60 0 0 0 140 240
+             A 38 38 0 0 0 105 320 Z" fill="none" stroke="#B4C0D0" stroke-width="15" stroke-dasharray="30 17" stroke-linecap="round" stroke-linejoin="round" />
+
+    <path d="M 80 345 L 295 130" fill="none" stroke="#E8EDF3" stroke-width="19" stroke-linecap="round" />
+
+    <path d="M 295 130
+             C 385 130, 395 270, 265 248
+             C 235 240, 205 200, 222 182
+             C 239 164, 265 192, 225 218" fill="none" stroke="#00D9FF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+
+    <g transform="translate(-32, -18)">
+      <circle cx="260" cy="235" r="5" fill="none" stroke="#FFFFFF" stroke-width="5" />
+      <path d="M 260 240
+               V 292
+               A 17 17 0 0 1 226 292
+               V 272
+               L 220 280" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,38 @@
+{
+  "name": "aws-logs-fisher",
+  "productName": "AWS Logs Fisher",
+  "version": "1.0.0",
+  "description": "Desktop app to follow and search CloudWatch logs (live and historical) using the AWS CLI and a SAML session (saml2aws)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "icons": "electron scripts/make-icons.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "aws",
+    "cloudwatch",
+    "logs",
+    "ecs",
+    "lambda",
+    "electron",
+    "saml2aws"
+  ],
+  "author": "Gustavo Acuña",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razhe/aws-logs-fisher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/razhe/aws-logs-fisher/issues"
+  },
+  "homepage": "https://github.com/razhe/aws-logs-fisher#readme",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=24.22.1"
+  },
+  "devDependencies": {
+    "electron": "^45.1.0"
+  }
+}

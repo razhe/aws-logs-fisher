@@ -1,0 +1,36 @@
+# dependencies and build output
+node_modules/
+dist/
+out/
+release/
+coverage/
+*.tgz
+
+# secrets and local configuration
+.env
+.env.*
+!.env.example
+.npmrc
+.yarnrc*
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+.saml2aws
+*.cache
+aws-logs-fisher-saml-*
+
+# logs, screenshots and manual test data
+*.log
+npm-debug.log*
+*.har
+screenshots/
+capturas/
+
+# editor and system
+.claude/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS Logs Fisher</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <header id="header">
+    <div class="brand">
+      <img class="logo" src="../assets/icon-small.svg" alt="">
+      <span>AWS Logs Fisher</span>
+    </div>
+    <label>Perfil <select id="profile"></select></label>
+    <label>Región <select id="region" title="Región de AWS (por defecto, la de tu perfil)"></select></label>
+    <span id="auth" class="pill pill-off">Sin verificar</span>
+    <button id="btn-check" title="Verificar sesión">Verificar</button>
+    <button id="btn-login" class="primary" title="Ejecuta saml2aws login (abre Edge)">Iniciar sesión SAML</button>
+    <button id="btn-theme" title="Alternar entre tema claro y oscuro">Tema</button>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <nav id="tabs" class="tabs"></nav>
+
+  <main id="panels">
+    <section id="panel-services" class="panel" hidden>
+      <div class="toolbar open-group">
+        <label>Log group
+          <input id="open-group" list="open-group-list" placeholder="/aws/lambda/mi-funcion" spellcheck="false">
+        </label>
+        <datalist id="open-group-list"></datalist>
+        <button id="btn-open-live" title="Seguir los logs a medida que se escriben">Logs en vivo</button>
+        <button id="btn-open-history" title="Buscar un término en un periodo pasado">Logs históricos</button>
+        <span class="muted">Para Lambdas u otros log groups que no pertenecen a un servicio de la lista</span>
+      </div>
+      <div class="toolbar">
+        <label>Cluster <select id="cluster"></select></label>
+        <input id="services-filter" placeholder="Filtrar servicios" spellcheck="false">
+        <button id="btn-services" class="link">Recargar</button>
+        <span class="muted" id="services-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="services">
+          <thead>
+            <tr><th>Servicio</th><th>Estado</th><th>Tareas (en ejecución / deseadas)</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="overlay" class="overlay" role="alert" aria-live="polite" hidden>
+    <div class="overlay-box">
+      <div class="spinner"></div>
+      <div id="overlay-text">Cargando…</div>
+    </div>
+  </div>
+
+  <script src="matcher.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
