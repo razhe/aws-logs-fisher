@@ -1,6 +1,14 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { parse, tokens } = require('../renderer/json');
+const { locate, parse, tokens } = require('../renderer/json');
+
+test('locate devuelve la posicion exacta del JSON dentro de la linea', () => {
+  const line = '2026-11-19T10:00:00Z INFO {"a":1} fin';
+  const found = locate(line);
+  assert.strictEqual(line.slice(found.start, found.end), '{"a":1}');
+  assert.deepStrictEqual(found.value, { a: 1 });
+  assert.strictEqual(locate('sin json'), null);
+});
 
 test('parse encuentra el JSON tras la hora y el nivel', () => {
   assert.deepStrictEqual(parse('2026-11-19T10:00:00.000Z INFO {"user":"ana","ok":true}'), { user: 'ana', ok: true });

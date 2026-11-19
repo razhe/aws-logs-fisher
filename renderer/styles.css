@@ -230,6 +230,8 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .tok-id { color: var(--tok-id); }
 .tok-method { color: var(--tok-method); font-weight: 600; }
 
+.ln.json-clamp:not(.hit) { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+
 .json-toggle { font: 11px/1.3 Consolas, "Cascadia Mono", monospace; padding: 0 5px; margin-right: 8px; color: var(--accent); background: transparent; border-radius: 4px; vertical-align: 1px; }
 .json-toggle[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); }
 .json-block { margin: 4px 0 6px; padding: 8px 12px; white-space: pre; word-break: normal; overflow-x: auto; font: inherit; background: color-mix(in srgb, var(--log-text) 5%, transparent); border: 1px solid var(--border); border-radius: 6px; }

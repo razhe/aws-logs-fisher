@@ -10,15 +10,15 @@
     ? value.some((item) => item !== null && typeof item === 'object')
     : value !== null && typeof value === 'object';
 
-  /** Devuelve el primer objeto JSON embebido en la línea (tras prefijos como hora o nivel), o un arreglo que contenga objetos; si no hay, null. */
-  function parse(text) {
+  /** Ubica el primer objeto JSON embebido en la línea (tras prefijos como hora o nivel), o un arreglo que contenga objetos: { value, start, end }, o null. */
+  function locate(text) {
     let start = text.search(/[{[]/);
     for (let attempt = 0; start !== -1 && attempt < MAX_ATTEMPTS; attempt++) {
       const end = text.lastIndexOf(CLOSERS[text[start]]);
       if (end > start) {
         try {
           const value = JSON.parse(text.slice(start, end + 1));
-          if (isStructured(value)) return value;
+          if (isStructured(value)) return { value, start, end: end + 1 };
         } catch {
           /* no es JSON desde esta posición: se prueba la siguiente llave */
         }
@@ -28,6 +28,8 @@
     }
     return null;
   }
+
+  const parse = (text) => locate(text)?.value ?? null;
 
   function tokens(value) {
     const pretty = JSON.stringify(value, null, 2);
@@ -47,5 +49,5 @@
     return out;
   }
 
-  return { parse, tokens };
+  return { locate, parse, tokens };
 });

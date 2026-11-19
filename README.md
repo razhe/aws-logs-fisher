@@ -10,7 +10,7 @@ Desktop app (Electron) for reviewing the CloudWatch logs of anything deployed on
 - **Live logs**: equivalent to `aws logs tail <group> --follow`, with server-side CloudWatch filtering, stream prefix, and log group autocomplete.
 - **Historical logs**: searches for a term over a period (15 minutes to 7 days, or custom dates) with `aws logs filter-log-events`. Supports case-insensitive matching, advanced CloudWatch filter patterns, cancellation, and copying results.
 - **Readable logs**: timestamps, log levels (`ERROR`, `WARN`, `INFO`, `DEBUG`), exception names, request ids, and HTTP methods are subtly colored so the relevant parts stand out.
-- **JSON viewer**: lines that contain JSON get a `{ }` button that expands it indented and syntax-highlighted, right below the line. Everything stays collapsed by default.
+- **JSON viewer**: lines that contain JSON get a `{ }` button that swaps the raw JSON for an indented, syntax-highlighted view, keeping the line's timestamp and level. While collapsed, long JSON is trimmed to two lines, except on lines that match your search or a fishing-net rule.
 - **Fishing net**: text or regex rules that highlight matching lines and capture them in a table. Click a row to jump to that line; the panel can be resized, minimized, or maximized, and captures are copied as TSV.
 - **Guided SAML login**: signs in with `saml2aws` from the app, with a role picker when you have several roles (it remembers the last one). The header shows the active role and account id.
 - **Light/dark theme**, following the system by default.

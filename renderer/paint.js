@@ -54,5 +54,22 @@
     return out;
   }
 
-  return { paint };
+  /** Reparte los tramos de paint() en tres grupos: antes de start, entre start y end, y desde end. */
+  function split(parts, start, end) {
+    const groups = [[], [], []];
+    const bounds = [[0, start], [start, end], [end, Infinity]];
+    let pos = 0;
+    for (const part of parts) {
+      const partEnd = pos + part.text.length;
+      bounds.forEach(([from, to], i) => {
+        const a = Math.max(pos, from);
+        const b = Math.min(partEnd, to);
+        if (a < b) groups[i].push({ ...part, text: part.text.slice(a - pos, b - pos) });
+      });
+      pos = partEnd;
+    }
+    return groups;
+  }
+
+  return { paint, split };
 });

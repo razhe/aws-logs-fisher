@@ -62,15 +62,35 @@ function bindGroupSuggest(input, datalist, getRegion) {
   });
 }
 
-function appendPainted(el, text, opts) {
-  for (const part of LogPaint.paint(text, opts)) {
+function appendParts(el, parts) {
+  for (const part of parts) {
     const node = part.type === 'plain' ? document.createTextNode(part.text) : h('span', { class: `tok-${part.type}` }, part.text);
     el.append(part.mark ? h('mark', {}, node) : node);
   }
 }
 
-function addJsonToggle(line, text) {
-  if (!JsonView.parse(text)) return;
+const appendPainted = (el, text, opts) => appendParts(el, LogPaint.paint(text, opts));
+
+/**
+ * Pinta la línea y, si trae JSON, agrega el botón { } que reemplaza el JSON crudo por su versión formateada.
+ * Mientras está cerrado, el JSON largo se recorta a dos líneas, salvo que la línea tenga una coincidencia.
+ */
+function renderLine(line, text, opts) {
+  const parts = LogPaint.paint(text, opts);
+  const json = JsonView.locate(text);
+  if (!json) {
+    appendParts(line, parts);
+    return;
+  }
+  const [before, inside, after] = LogPaint.split(parts, json.start, json.end);
+  const raw = h('span', { class: 'json-raw' });
+  appendParts(raw, inside);
+  appendParts(line, before);
+  line.append(raw);
+  appendParts(line, after);
+  const clamp = !parts.some((p) => p.mark);
+  line.classList.toggle('json-clamp', clamp);
+
   let block;
   const btn = h('button', { class: 'json-toggle', title: 'Ver JSON formateado', 'aria-expanded': 'false' }, '{ }');
   btn.addEventListener('click', (e) => {
@@ -78,8 +98,10 @@ function addJsonToggle(line, text) {
     block ??= h('pre', { class: 'json-block' },
       JsonView.tokens(JsonView.parse(text)).map((t) => (t.type === 'plain' ? t.text : h('span', { class: `json-${t.type}` }, t.text))));
     const open = !block.isConnected;
-    if (open) line.append(block);
+    if (open) raw.after(block);
     else block.remove();
+    raw.hidden = open;
+    line.classList.toggle('json-clamp', clamp && !open);
     btn.setAttribute('aria-expanded', String(open));
   });
   line.prepend(btn);
@@ -642,8 +664,7 @@ class LogTab {
       const n = this.nextN++;
       this.lines.push({ n, text });
       const el = h('div', { class: 'ln' });
-      appendPainted(el, text || ' ');
-      addJsonToggle(el, text);
+      renderLine(el, text || ' ');
       this.els.set(n, el);
       frag.append(el);
       const row = this.capture(n, text);
@@ -1091,8 +1112,7 @@ class SearchTab {
     for (const ev of this.queue.splice(0, 1500)) {
       const el = h('div', { class: 'ln', title: ev.s }, h('span', { class: 'ts' }, fmtLocal(ev.t)));
       const message = ev.m.replace(/\s+$/, '');
-      appendPainted(el, message, { needle: this.raw ? '' : this.term, ignoreCase: this.ignoreCase });
-      addJsonToggle(el, message);
+      renderLine(el, message, { needle: this.raw ? '' : this.term, ignoreCase: this.ignoreCase });
       frag.append(el);
     }
     this.view.append(frag);

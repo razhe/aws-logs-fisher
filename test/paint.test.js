@@ -1,6 +1,17 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { paint } = require('../renderer/paint');
+const { paint, split } = require('../renderer/paint');
+
+test('split reparte los tramos en antes, dentro y despues sin perder texto ni marcas', () => {
+  const line = 'x INFO {"msg":"INFO ok"} y';
+  const start = line.indexOf('{');
+  const end = line.indexOf('}') + 1;
+  const [before, inside, after] = split(paint(line, { needle: 'info', ignoreCase: true }), start, end);
+  const join = (parts) => parts.map((p) => p.text).join('');
+  assert.deepStrictEqual([join(before), join(inside), join(after)], ['x INFO ', '{"msg":"INFO ok"}', ' y']);
+  assert.ok(before.some((p) => p.mark && p.type === 'info'));
+  assert.ok(inside.some((p) => p.mark && p.text === 'INFO'));
+});
 
 const typed = (text, opts) => paint(text, opts).filter((p) => p.type !== 'plain').map((p) => [p.type, p.text]);
 
