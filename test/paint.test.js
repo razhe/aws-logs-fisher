@@ -31,6 +31,19 @@ test('reconoce niveles y metodos HTTP sin colorear palabras comunes', () => {
   assert.deepStrictEqual(typed('Error suelto y ERRORES'), []);
 });
 
+test('marca URLs y rutas de dos o mas segmentos, pero no rutas sueltas', () => {
+  assert.deepStrictEqual(typed('calling https://payments.internal/api/v2/charges?x=1 now'), [['url', 'https://payments.internal/api/v2/charges?x=1']]);
+  assert.deepStrictEqual(typed('POST /api/orders/42 201'), [['method', 'POST'], ['url', '/api/orders/42']]);
+  assert.deepStrictEqual(typed('GET /health 200'), [['method', 'GET']]);
+});
+
+test('las lineas de stack trace se marcan completas, tambien dentro de un evento multilinea', () => {
+  assert.deepStrictEqual(typed('    at handler (/var/task/index.js:12:5)'), [['stack', '    at handler (/var/task/index.js:12:5)']]);
+  const event = 'ERROR TimeoutError: boom\n   at Foo.Bar() in C:\\src\\Foo.cs:line 42\nfin';
+  assert.deepStrictEqual(typed(event).map(([type]) => type), ['error', 'exception', 'stack']);
+  assert.deepStrictEqual(typed('the cat sat at home'), []);
+});
+
 test('los tramos reconstruyen la linea exacta', () => {
   const line = '2026-11-19 10:00:00,123 INFO POST /orders done';
   assert.strictEqual(paint(line).map((p) => p.text).join(''), line);

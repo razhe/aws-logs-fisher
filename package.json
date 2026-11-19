@@ -46,7 +46,8 @@
       "renderer/**",
       "assets/icon.ico",
       "assets/icon.png",
-      "assets/icon-small.svg"
+      "assets/icon-small.svg",
+      "assets/fonts/**"
     ],
     "electronFuses": {
       "runAsNode": false,

@@ -3,6 +3,7 @@
   else root.LogPaint = factory();
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   const TOKEN_RE = new RegExp([
+    String.raw`(?<stack>^[ \t]+at [^\n]*)`,
     String.raw`(?<time>\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:[.,]\d+)?(?:Z|[+-]\d{2}:?\d{2})?)`,
     String.raw`\b(?<error>ERROR|ERR|FATAL|CRITICAL|SEVERE)\b`,
     String.raw`\b(?<warn>WARN|WARNING)\b`,
@@ -10,8 +11,9 @@
     String.raw`\b(?<debug>DEBUG|TRACE|VERBOSE)\b`,
     String.raw`\b(?<exception>[A-Z]\w*(?:Error|Exception))\b`,
     String.raw`\b(?<id>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\b`,
-    String.raw`\b(?<method>GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b`
-  ].join('|'), 'g');
+    String.raw`\b(?<method>GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b`,
+    String.raw`(?<url>\bhttps?:\/\/[^\s"'<>)\]]+|(?<![\w.:/])\/[\w.~%-]+(?:\/[\w.~%{}:-]+)+)`
+  ].join('|'), 'gm');
 
   function segments(text) {
     const out = [];

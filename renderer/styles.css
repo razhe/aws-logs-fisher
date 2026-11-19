@@ -1,5 +1,39 @@
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(../assets/fonts/jetbrains-mono-latin-wght-normal.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(../assets/fonts/jetbrains-mono-latin-wght-italic.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(../assets/fonts/jetbrains-mono-latin-ext-wght-normal.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: italic;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(../assets/fonts/jetbrains-mono-latin-ext-wght-italic.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 :root {
   color-scheme: light;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
   --bg: #f5f6f8;
   --panel: #ffffff;
   --border: #d9dde3;
@@ -190,7 +224,7 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .warn { color: var(--warn); }
 .bad { color: var(--bad); }
 .muted { color: var(--muted); }
-.mono { font-family: Consolas, "Cascadia Mono", monospace; }
+.mono { font-family: var(--font-mono); }
 
 .open-group { padding-bottom: 10px; margin-bottom: 2px; border-bottom: 1px solid var(--border); }
 .open-group input { width: 380px; max-width: 40vw; }
@@ -211,17 +245,18 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
   overflow: auto;
   background: var(--log-bg);
   color: var(--log-text);
-  font: 12.5px/1.45 Consolas, "Cascadia Mono", monospace;
+  font: 12.5px/1.5 var(--font-mono);
+  font-variant-ligatures: none;
   padding: 6px 0;
 }
-.log-view:empty::before { content: attr(data-placeholder); color: var(--log-muted); padding: 12px 16px; display: block; }
+.log-view:empty::before { content: attr(data-placeholder); color: var(--log-muted); font-style: italic; padding: 12px 16px; display: block; }
 .ln { position: relative; white-space: pre-wrap; word-break: break-all; padding: 0 14px 0 11px; border-left: 3px solid transparent; }/* Corchete guía para mensajes largos: con una sola línea su alto queda en 0 y no se ve; aparece solo cuando ocupa varias. */
 .ln.long::before {
   content: "";
   position: absolute;
   left: 3px;
-  top: .75em;
-  bottom: .75em;
+  top: .8em;
+  bottom: .8em;
   width: 5px;
   pointer-events: none;
   opacity: .6;
@@ -240,17 +275,20 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .tok-time, .tok-debug { color: var(--log-muted); }
 .tok-error, .tok-warn, .tok-info { font-weight: 600; }
 .tok-error, .tok-exception { color: var(--tok-error); }
+.tok-exception { font-weight: 700; }
 .tok-warn { color: var(--tok-warn); }
 .tok-info { color: var(--tok-info); }
-.tok-id { color: var(--tok-id); }
+.tok-id { color: var(--tok-id); font-style: italic; }
 .tok-method { color: var(--tok-method); font-weight: 600; }
+.tok-url { text-decoration: underline dotted color-mix(in srgb, var(--log-muted) 70%, transparent); text-underline-offset: 3px; }
+.tok-stack, .ln.lvl-debug { color: var(--log-muted); font-style: italic; }
 
 .ln.json-clamp:not(.hit) { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 
-.json-toggle { font: 11px/1.3 Consolas, "Cascadia Mono", monospace; padding: 0 5px; margin-right: 8px; color: var(--accent); background: transparent; border-radius: 4px; vertical-align: 1px; }
+.json-toggle { font: 11px/1.3 var(--font-mono); padding: 0 5px; margin-right: 8px; color: var(--accent); background: transparent; border-radius: 4px; vertical-align: 1px; }
 .json-toggle[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); }
 .json-block { margin: 4px 0 6px; padding: 8px 12px; white-space: pre; word-break: normal; overflow-x: auto; font: inherit; background: color-mix(in srgb, var(--log-text) 5%, transparent); border: 1px solid var(--border); border-radius: 6px; }
-.json-key { color: var(--json-key); }
+.json-key { color: var(--json-key); font-weight: 600; }
 .json-string { color: var(--json-string); }
 .json-number { color: var(--json-number); }
 .json-literal { color: var(--json-literal); }
@@ -280,11 +318,11 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .cap-row > * { padding: 4px 12px; min-width: 0; }
 .cap-row { cursor: pointer; border-left-color: var(--c, transparent); content-visibility: auto; contain-intrinsic-block-size: auto 28px; }
 .cap-row:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.cap-row .time { color: var(--muted); font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; white-space: nowrap; }
+.cap-row .time { color: var(--muted); font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
 .cap-row .rule { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cap-row .msg { white-space: pre-wrap; word-break: break-all; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
+.cap-row .msg { white-space: pre-wrap; word-break: break-all; font-family: var(--font-mono); font-size: 12px; }
 .cap-row .act { text-align: right; }
-.net-body .empty { color: var(--muted); padding: 14px; }
+.net-body .empty { color: var(--muted); font-style: italic; padding: 14px; }
 
 .log-tab.net-min .splitter, .log-tab.net-min .rules, .log-tab.net-min .net-body { display: none; }
 .log-tab.net-min .net { height: auto !important; }

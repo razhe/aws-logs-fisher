@@ -6,6 +6,7 @@ const MAX_CAPTURED = 5000;
 const FLUSH_CHUNK = 2000;
 const RULE_COLORS = ['#3e63dd', '#8e4ec6', '#12a594', '#0ea5e9', '#46a758', '#a18072'];
 const LONG_LINE_CHARS = 300;
+const LEVELS = new Set(['error', 'warn', 'info', 'debug']);
 const MIN_NET = 90;
 
 function h(tag, props = {}, ...children) {
@@ -82,6 +83,7 @@ const appendPainted = (el, text, opts) => appendParts(el, LogPaint.paint(text, o
 function renderLine(line, text, opts) {
   line.classList.toggle('long', text.replace(/\s+/g, '').length >= LONG_LINE_CHARS);
   const parts = LogPaint.paint(text, opts);
+  line.classList.toggle('lvl-debug', parts.find((p) => LEVELS.has(p.type))?.type === 'debug');
   const json = JsonView.locate(text);
   if (!json) {
     appendParts(line, parts);

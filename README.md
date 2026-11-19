@@ -91,3 +91,5 @@ test/            tests (node --test)
 ## License
 
 [MIT](LICENSE)
+
+Logs are rendered with [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono), bundled in `assets/fonts` under the [SIL Open Font License 1.1](assets/fonts/OFL.txt).
