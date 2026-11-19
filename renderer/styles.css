@@ -15,6 +15,10 @@
   --log-err: #c53030;
   --mark: #ffe58a;
   --flash: #ffd166;
+  --json-key: #0b5cad;
+  --json-string: #1a7f37;
+  --json-number: #b35900;
+  --json-literal: #8250df;
 }
 
 :root[data-theme="dark"] {
@@ -34,6 +38,10 @@
   --log-err: #ff8f8f;
   --mark: #6b5a12;
   --flash: #ffd166;
+  --json-key: #7cb7ff;
+  --json-string: #7ee2a8;
+  --json-number: #f0b46b;
+  --json-literal: #c79bff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +62,10 @@
     --log-err: #ff8f8f;
     --mark: #6b5a12;
     --flash: #ffd166;
+    --json-key: #7cb7ff;
+    --json-string: #7ee2a8;
+    --json-number: #f0b46b;
+    --json-literal: #c79bff;
   }
 }
 
@@ -163,6 +175,14 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .ln.note { color: var(--log-muted); font-style: italic; }
 .ln.note.err { color: var(--log-err); }
 @keyframes flash { from { background: color-mix(in srgb, var(--flash) 55%, transparent); } }
+
+.json-toggle { font: 11px/1.3 Consolas, "Cascadia Mono", monospace; padding: 0 5px; margin-right: 8px; color: var(--accent); background: transparent; border-radius: 4px; vertical-align: 1px; }
+.json-toggle[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); }
+.json-block { margin: 4px 0 6px; padding: 8px 12px; white-space: pre; word-break: normal; overflow-x: auto; font: inherit; background: color-mix(in srgb, var(--log-text) 5%, transparent); border: 1px solid var(--border); border-radius: 6px; }
+.json-key { color: var(--json-key); }
+.json-string { color: var(--json-string); }
+.json-number { color: var(--json-number); }
+.json-literal { color: var(--json-literal); }
 
 .splitter { height: 7px; flex: none; cursor: row-resize; background: var(--border); position: relative; }
 .splitter::after { content: ""; position: absolute; left: 50%; top: 2px; width: 40px; height: 3px; margin-left: -20px; border-radius: 2px; background: var(--muted); opacity: .6; }

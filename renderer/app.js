@@ -62,6 +62,22 @@ function bindGroupSuggest(input, datalist, getRegion) {
   });
 }
 
+function addJsonToggle(line, text) {
+  if (!JsonView.parse(text)) return;
+  let block;
+  const btn = h('button', { class: 'json-toggle', title: 'Ver JSON formateado', 'aria-expanded': 'false' }, '{ }');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    block ??= h('pre', { class: 'json-block' },
+      JsonView.tokens(JsonView.parse(text)).map((t) => (t.type === 'plain' ? t.text : h('span', { class: `json-${t.type}` }, t.text))));
+    const open = !block.isConnected;
+    if (open) line.append(block);
+    else block.remove();
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  line.prepend(btn);
+}
+
 /* ---------- sesión ---------- */
 
 function showBanner(message, isError = false) {
@@ -611,6 +627,7 @@ class LogTab {
       const n = this.nextN++;
       this.lines.push({ n, text });
       const el = h('div', { class: 'ln' }, text || ' ');
+      addJsonToggle(el, text);
       this.els.set(n, el);
       frag.append(el);
       const row = this.capture(n, text);
@@ -1072,7 +1089,9 @@ class SearchTab {
     const frag = document.createDocumentFragment();
     for (const ev of this.queue.splice(0, 1500)) {
       const el = h('div', { class: 'ln', title: ev.s }, h('span', { class: 'ts' }, fmtLocal(ev.t)));
-      appendHighlighted(el, ev.m.replace(/\s+$/, ''), this.raw ? '' : this.term, this.ignoreCase);
+      const message = ev.m.replace(/\s+$/, '');
+      appendHighlighted(el, message, this.raw ? '' : this.term, this.ignoreCase);
+      addJsonToggle(el, message);
       frag.append(el);
     }
     this.view.append(frag);
