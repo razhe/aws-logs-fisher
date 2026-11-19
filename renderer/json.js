@@ -6,7 +6,11 @@
   const CLOSERS = { '{': '}', '[': ']' };
   const TOKEN_RE = /("(?:\\.|[^"\\])*")(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
 
-  /** Devuelve el primer objeto o arreglo JSON embebido en la línea (tras prefijos como hora o nivel), o null. */
+  const isStructured = (value) => Array.isArray(value)
+    ? value.some((item) => item !== null && typeof item === 'object')
+    : value !== null && typeof value === 'object';
+
+  /** Devuelve el primer objeto JSON embebido en la línea (tras prefijos como hora o nivel), o un arreglo que contenga objetos; si no hay, null. */
   function parse(text) {
     let start = text.search(/[{[]/);
     for (let attempt = 0; start !== -1 && attempt < MAX_ATTEMPTS; attempt++) {
@@ -14,7 +18,7 @@
       if (end > start) {
         try {
           const value = JSON.parse(text.slice(start, end + 1));
-          if (value && typeof value === 'object') return value;
+          if (isStructured(value)) return value;
         } catch {
           /* no es JSON desde esta posición: se prueba la siguiente llave */
         }

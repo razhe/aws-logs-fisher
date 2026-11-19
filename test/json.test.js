@@ -13,7 +13,13 @@ test('parse soporta el formato de Lambda con request id y tabs', () => {
 
 test('parse salta corchetes de prefijo que no son JSON', () => {
   assert.deepStrictEqual(parse('[INFO] [worker-1] {"job":7}'), { job: 7 });
-  assert.deepStrictEqual(parse('ids: [1, 2, 3]'), [1, 2, 3]);
+  assert.deepStrictEqual(parse('items: [{"id":1},{"id":2}]'), [{ id: 1 }, { id: 2 }]);
+});
+
+test('parse no toma como JSON los event ids de .NET ni arreglos de valores simples', () => {
+  assert.strictEqual(parse('info: System.Net.Http.HttpClient.IngressHttpClient.ClientHandler[101]'), null);
+  assert.strictEqual(parse('warn: Microsoft.AspNetCore.Server[3] retry [1, 2, 3]'), null);
+  assert.deepStrictEqual(parse('info: App.Orders[7] {"orderId":42}'), { orderId: 42 });
 });
 
 test('parse ignora texto sin JSON y valores que no son objetos', () => {
