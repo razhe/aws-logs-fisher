@@ -1,7 +1,7 @@
 {
   "name": "aws-logs-fisher",
   "productName": "AWS Logs Fisher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Desktop app to follow and search CloudWatch logs (live and historical) using the AWS CLI and a SAML session (saml2aws)",
   "main": "main.js",
   "scripts": {
@@ -31,7 +31,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=24.22.1"
+    "node": ">=24.22.3"
   },
   "build": {
     "appId": "com.razhe.awslogsfisher",
@@ -55,7 +55,7 @@
     }
   },
   "devDependencies": {
-    "electron": "^45.1.0",
+    "electron": "^45.4.1",
     "electron-builder": "^26.18.0"
   }
 }

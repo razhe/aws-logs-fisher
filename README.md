@@ -9,14 +9,16 @@ Desktop app (Electron) for reviewing the CloudWatch logs of anything deployed on
 - **ECS services**: lists clusters and shows the health of each service (healthy, degraded, down, stopped). From each row you open its live or historical logs.
 - **Live logs**: equivalent to `aws logs tail <group> --follow`, with server-side CloudWatch filtering, stream prefix, and log group autocomplete.
 - **Historical logs**: searches for a term over a period (15 minutes to 7 days, or custom dates) with `aws logs filter-log-events`. Supports case-insensitive matching, advanced CloudWatch filter patterns, cancellation, and copying results.
+- **Readable logs**: timestamps, log levels (`ERROR`, `WARN`, `INFO`, `DEBUG`), exception names, request ids, and HTTP methods are subtly colored so the relevant parts stand out.
+- **JSON viewer**: lines that contain JSON get a `{ }` button that expands it indented and syntax-highlighted, right below the line. Everything stays collapsed by default.
 - **Fishing net**: text or regex rules that highlight matching lines and capture them in a table. Click a row to jump to that line; the panel can be resized, minimized, or maximized, and captures are copied as TSV.
-- **Guided SAML login**: signs in with `saml2aws` from the app, with a role picker when you have several roles (it remembers the last one).
+- **Guided SAML login**: signs in with `saml2aws` from the app, with a role picker when you have several roles (it remembers the last one). The header shows the active role and account id.
 - **Light/dark theme**, following the system by default.
 - Any log group (Lambdas or others) can be opened from the **Log group** field of the Services tab.
 
 ## Requirements
 
-- Node.js 24.22.1 or later (see `.nvmrc`). With nvm: `nvm install 24.22.2` and `nvm use 24.22.2`.
+- Node.js 24.22.3 or later (see `.nvmrc`). With nvm: `nvm install 24.22.3` and `nvm use 24.22.3`.
 - [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your `PATH`.
 - [saml2aws](https://github.com/Versent/saml2aws) on your `PATH`, already configured for your identity provider (`saml2aws configure`).
 - A profile in `~/.aws/config`; the SAML login writes the credentials there.
