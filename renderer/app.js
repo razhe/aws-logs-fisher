@@ -62,6 +62,13 @@ function bindGroupSuggest(input, datalist, getRegion) {
   });
 }
 
+function appendPainted(el, text, opts) {
+  for (const part of LogPaint.paint(text, opts)) {
+    const node = part.type === 'plain' ? document.createTextNode(part.text) : h('span', { class: `tok-${part.type}` }, part.text);
+    el.append(part.mark ? h('mark', {}, node) : node);
+  }
+}
+
 function addJsonToggle(line, text) {
   if (!JsonView.parse(text)) return;
   let block;
@@ -626,7 +633,8 @@ class LogTab {
     for (const text of batch) {
       const n = this.nextN++;
       this.lines.push({ n, text });
-      const el = h('div', { class: 'ln' }, text || ' ');
+      const el = h('div', { class: 'ln' });
+      appendPainted(el, text || ' ');
       addJsonToggle(el, text);
       this.els.set(n, el);
       frag.append(el);
@@ -762,10 +770,12 @@ class LogTab {
 
   rowEl(row) {
     const rules = row.ruleIds.map((id) => this.ruleById(id)).filter(Boolean);
+    const msg = h('td', { class: 'msg' });
+    appendPainted(msg, row.time ? Matcher.stripTime(row.text) : row.text);
     const tr = h('tr', { title: 'Ir a la línea en el log' },
       h('td', { class: 'time' }, row.time || '—'),
       h('td', {}, rules.map((r) => r.pattern).join(', ')),
-      h('td', { class: 'msg' }, row.time ? Matcher.stripTime(row.text) : row.text),
+      msg,
       h('td', { class: 'act' }, this.copyButton(row)));
     if (rules[0]) tr.style.setProperty('--c', rules[0].color);
     tr.addEventListener('click', () => this.jumpTo(row.n));
@@ -899,23 +909,6 @@ function fmtLocal(ms) {
 function toInputValue(ms) {
   const d = new Date(ms);
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function appendHighlighted(el, text, needle, ignoreCase) {
-  const hay = ignoreCase ? text.toLowerCase() : text;
-  const n = ignoreCase ? needle.toLowerCase() : needle;
-  if (!n || hay.length !== text.length) {
-    el.append(text);
-    return;
-  }
-  let i = 0;
-  let at;
-  while ((at = hay.indexOf(n, i)) !== -1) {
-    if (at > i) el.append(text.slice(i, at));
-    el.append(h('mark', {}, text.slice(at, at + n.length)));
-    i = at + n.length;
-  }
-  if (i < text.length) el.append(text.slice(i));
 }
 
 class SearchTab {
@@ -1090,7 +1083,7 @@ class SearchTab {
     for (const ev of this.queue.splice(0, 1500)) {
       const el = h('div', { class: 'ln', title: ev.s }, h('span', { class: 'ts' }, fmtLocal(ev.t)));
       const message = ev.m.replace(/\s+$/, '');
-      appendHighlighted(el, message, this.raw ? '' : this.term, this.ignoreCase);
+      appendPainted(el, message, { needle: this.raw ? '' : this.term, ignoreCase: this.ignoreCase });
       addJsonToggle(el, message);
       frag.append(el);
     }

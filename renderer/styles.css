@@ -19,6 +19,11 @@
   --json-string: #1a7f37;
   --json-number: #b35900;
   --json-literal: #8250df;
+  --tok-error: #c53030;
+  --tok-warn: #b25e00;
+  --tok-info: #1a6fe0;
+  --tok-id: #8250df;
+  --tok-method: #0f7b6c;
 }
 
 :root[data-theme="dark"] {
@@ -42,6 +47,11 @@
   --json-string: #7ee2a8;
   --json-number: #f0b46b;
   --json-literal: #c79bff;
+  --tok-error: #ff8f8f;
+  --tok-warn: #f0b46b;
+  --tok-info: #5aa2ff;
+  --tok-id: #b9a3e8;
+  --tok-method: #4fd1c5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,6 +76,11 @@
     --json-string: #7ee2a8;
     --json-number: #f0b46b;
     --json-literal: #c79bff;
+    --tok-error: #ff8f8f;
+    --tok-warn: #f0b46b;
+    --tok-info: #5aa2ff;
+    --tok-id: #b9a3e8;
+    --tok-method: #4fd1c5;
   }
 }
 
@@ -175,6 +190,14 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .ln.note { color: var(--log-muted); font-style: italic; }
 .ln.note.err { color: var(--log-err); }
 @keyframes flash { from { background: color-mix(in srgb, var(--flash) 55%, transparent); } }
+
+.tok-time, .tok-debug { color: var(--log-muted); }
+.tok-error, .tok-warn, .tok-info { font-weight: 600; }
+.tok-error, .tok-exception { color: var(--tok-error); }
+.tok-warn { color: var(--tok-warn); }
+.tok-info { color: var(--tok-info); }
+.tok-id { color: var(--tok-id); }
+.tok-method { color: var(--tok-method); font-weight: 600; }
 
 .json-toggle { font: 11px/1.3 Consolas, "Cascadia Mono", monospace; padding: 0 5px; margin-right: 8px; color: var(--accent); background: transparent; border-radius: 4px; vertical-align: 1px; }
 .json-toggle[aria-expanded="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); }
