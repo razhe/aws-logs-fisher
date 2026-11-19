@@ -3,6 +3,7 @@ const $ = (id) => document.getElementById(id);
 const MAX_LINES = 20000;
 const TRIM_TO = 15000;
 const MAX_CAPTURED = 5000;
+const FLUSH_CHUNK = 2000;
 const RULE_COLORS = ['#e5484d', '#f5a524', '#30a46c', '#3e63dd', '#8e4ec6', '#12a594'];
 const MIN_NET = 90;
 
@@ -51,13 +52,15 @@ async function busy(message, fn) {
 
 function bindGroupSuggest(input, datalist, getRegion) {
   let timer;
+  let seq = 0;
   input.addEventListener('input', () => {
     clearTimeout(timer);
     timer = setTimeout(async () => {
       const q = input.value.trim();
       if (q.length < 3) return;
+      const current = ++seq;
       const res = await window.api.listLogGroups({ ...ctx(), region: getRegion() || ctx().region }, q);
-      if (res.ok) datalist.replaceChildren(...res.data.map((g) => h('option', { value: g })));
+      if (res.ok && current === seq) datalist.replaceChildren(...res.data.map((g) => h('option', { value: g })));
     }, 300);
   });
 }
@@ -481,7 +484,6 @@ class LogTab {
     this.queue = [];
     this.raf = 0;
     this.running = false;
-    this.rowsDirty = false;
     this.netState = 'normal';
     this.netHeight = 230;
     this.savedScroll = 0;
@@ -550,10 +552,14 @@ class LogTab {
     this.maxBtn = h('button', { title: 'Ocupar toda la pantalla de logs / restaurar', onclick: () => this.setNet(this.netState === 'max' ? 'normal' : 'max') }, 'Maximizar');
     this.rulesEl = h('div', { class: 'rules' });
     this.tableAuto = true;
-    this.tbody = h('tbody', {});
+    this.rowsEl = h('div', { role: 'rowgroup' });
     this.emptyEl = h('div', { class: 'empty' }, 'Agrega un filtro arriba: las líneas que coincidan quedarán capturadas aquí.');
     this.tableWrap = h('div', { class: 'net-body' },
-      h('table', {}, h('thead', {}, h('tr', {}, h('th', { class: 'col-time' }, 'Hora'), h('th', { class: 'col-rule' }, 'Regla'), h('th', {}, 'Línea'), h('th', { class: 'col-act' }))), this.tbody),
+      h('div', { class: 'cap-table', role: 'table', 'aria-label': 'Capturas' },
+        h('div', { class: 'cap-head', role: 'row' },
+          h('span', { role: 'columnheader' }, 'Hora'), h('span', { role: 'columnheader' }, 'Regla'),
+          h('span', { role: 'columnheader' }, 'Línea'), h('span', { role: 'columnheader' })),
+        this.rowsEl),
       this.emptyEl);
 
     const head = h('div', { class: 'net-head' },
@@ -657,7 +663,7 @@ class LogTab {
 
   flush() {
     this.raf = 0;
-    const batch = this.queue.splice(0);
+    const batch = this.queue.splice(0, FLUSH_CHUNK);
     const frag = document.createDocumentFragment();
     const fresh = [];
     for (const text of batch) {
@@ -675,10 +681,12 @@ class LogTab {
     }
     this.view.append(frag);
     this.trim();
-    if (this.rowsDirty) this.renderRows();
-    else if (fresh.length) this.appendRows(fresh);
+    const kept = fresh.filter((row) => this.rowByN.get(row.n) === row);
+    if (kept.length) this.appendRows(kept);
     this.updateCounts();
+    if (kept.length) this.followTable();
     this.scrollIfAuto();
+    if (this.queue.length) this.raf = requestAnimationFrame(() => this.flush());
   }
 
   scrollIfAuto() {
@@ -777,8 +785,9 @@ class LogTab {
     this.rows.push(row);
     this.rowByN.set(n, row);
     if (this.rows.length > MAX_CAPTURED) {
-      this.rowByN.delete(this.rows.shift().n);
-      this.rowsDirty = true;
+      const oldest = this.rows.shift();
+      this.rowByN.delete(oldest.n);
+      oldest.el?.remove();
     }
     return row;
   }
@@ -799,16 +808,17 @@ class LogTab {
 
   rowEl(row) {
     const rules = row.ruleIds.map((id) => this.ruleById(id)).filter(Boolean);
-    const msg = h('td', { class: 'msg' });
+    const msg = h('span', { class: 'msg', role: 'cell' });
     appendPainted(msg, row.time ? Matcher.stripTime(row.text) : row.text);
-    const tr = h('tr', { title: 'Ir a la línea en el log' },
-      h('td', { class: 'time' }, row.time || '—'),
-      h('td', {}, rules.map((r) => r.pattern).join(', ')),
+    const el = h('div', { class: 'cap-row', role: 'row', title: 'Ir a la línea en el log' },
+      h('span', { class: 'time', role: 'cell' }, row.time || '—'),
+      h('span', { class: 'rule', role: 'cell' }, rules.map((r) => r.pattern).join(', ')),
       msg,
-      h('td', { class: 'act' }, this.copyButton(row)));
-    if (rules[0]) tr.style.setProperty('--c', rules[0].color);
-    tr.addEventListener('click', () => this.jumpTo(row.n));
-    return tr;
+      h('span', { class: 'act', role: 'cell' }, this.copyButton(row)));
+    if (rules[0]) el.style.setProperty('--c', rules[0].color);
+    el.addEventListener('click', () => this.jumpTo(row.n));
+    row.el = el;
+    return el;
   }
 
   copyButton(row) {
@@ -827,16 +837,14 @@ class LogTab {
   }
 
   renderRows() {
-    this.rowsDirty = false;
-    this.tbody.replaceChildren(...this.rows.map((r) => this.rowEl(r)));
+    this.rowsEl.replaceChildren(...this.rows.map((r) => this.rowEl(r)));
     this.emptyEl.hidden = this.rows.length > 0;
     this.followTable();
   }
 
   appendRows(rows) {
-    this.tbody.append(...rows.map((r) => this.rowEl(r)));
+    this.rowsEl.append(...rows.map((r) => this.rowEl(r)));
     this.emptyEl.hidden = true;
-    this.followTable();
   }
 
   followTable() {
@@ -1109,7 +1117,7 @@ class SearchTab {
   flush() {
     this.raf = 0;
     const frag = document.createDocumentFragment();
-    for (const ev of this.queue.splice(0, 1500)) {
+    for (const ev of this.queue.splice(0, FLUSH_CHUNK)) {
       const el = h('div', { class: 'ln', title: ev.s }, h('span', { class: 'ts' }, fmtLocal(ev.t)));
       const message = ev.m.replace(/\s+$/, '');
       renderLine(el, message, { needle: this.raw ? '' : this.term, ignoreCase: this.ignoreCase });

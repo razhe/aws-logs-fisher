@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const cp = require('node:child_process');
 const fs = require('node:fs');
+const bin = require('../src/bin');
 const { listRoles, login, discardCache, parseRoles, ROLE_RE } = require('../src/saml');
 
 const account = (digit) => String(digit).repeat(12);
@@ -16,6 +17,7 @@ function cacheArg(args) {
 
 function stubSaml(t, handler) {
   const calls = [];
+  t.mock.method(bin, 'resolveBin', (name) => name);
   t.mock.method(cp, 'execFile', (file, args, opts, cb) => {
     calls.push({ file, args });
     handler(args, cb);
@@ -100,6 +102,15 @@ test('saml2aws no instalado se reporta como NOT_INSTALLED', async (t) => {
   stubSaml(t, (args, cb) => cb(Object.assign(new Error('spawn saml2aws ENOENT'), { code: 'ENOENT' }), '', ''));
   await assert.rejects(listRoles(), (e) => e.code === 'NOT_INSTALLED');
   await assert.rejects(login({ role: DEV }), (e) => e.code === 'NOT_INSTALLED');
+});
+
+test('saml2aws fuera del PATH se reporta como NOT_INSTALLED sin lanzar nada', async (t) => {
+  const calls = stubSaml(t, (args, cb) => cb(null, '', ''));
+  bin.resolveBin.mock.mockImplementation(() => {
+    throw Object.assign(new Error('saml2aws no está instalado o no está en el PATH'), { code: 'NOT_INSTALLED' });
+  });
+  await assert.rejects(listRoles(), (e) => e.code === 'NOT_INSTALLED');
+  assert.strictEqual(calls.length, 0);
 });
 
 test('si login falla, igualmente se borra la respuesta SAML', async (t) => {

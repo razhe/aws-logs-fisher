@@ -1,4 +1,5 @@
 const { execFile, spawn } = require('node:child_process');
+const bin = require('./bin');
 
 const NAME_RE = /^(?!-)[A-Za-z0-9._\-/:]{1,512}$/;
 const LOG_GROUP_RE = /^(?!-)[A-Za-z0-9._\-/#]{1,512}$/;
@@ -28,7 +29,7 @@ function classifyError(stderr) {
 
 function run(file, args, { timeout = 60000, env } = {}) {
   return new Promise((resolve, reject) => {
-    execFile(file, args, { windowsHide: true, timeout, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...env } }, (err, stdout, stderr) => {
+    execFile(bin.resolveBin(file), args, { windowsHide: true, timeout, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...env } }, (err, stdout, stderr) => {
       if (err) {
         const e = new Error((stderr || err.message).trim());
         e.code = err.code === 'ENOENT' ? 'NOT_INSTALLED' : classifyError(stderr || '');
@@ -134,7 +135,7 @@ const searches = new Map();
 
 function killTree(child) {
   if (!child?.pid) return;
-  if (process.platform === 'win32') spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { windowsHide: true });
+  if (process.platform === 'win32') spawn(bin.systemBin('taskkill'), ['/pid', String(child.pid), '/T', '/F'], { windowsHide: true });
   else child.kill();
 }
 
@@ -157,7 +158,7 @@ function buildFilterPattern(term, { raw = false, ignoreCase = false } = {}) {
 
 function runCancellable(args, state) {
   return new Promise((resolve, reject) => {
-    state.child = execFile('aws', args, { windowsHide: true, timeout: 120000, maxBuffer: 128 * 1024 * 1024 }, (err, stdout, stderr) => {
+    state.child = execFile(bin.resolveBin('aws'), args, { windowsHide: true, timeout: 120000, maxBuffer: 128 * 1024 * 1024 }, (err, stdout, stderr) => {
       if (state.cancelled) return resolve(null);
       if (err) {
         const e = new Error((stderr || err.message).trim());
@@ -225,6 +226,7 @@ function stopAllSearches() {
 }
 
 const streams = new Map();
+const MAX_STDERR = 8192;
 
 function startLogs(ctx, id, { group, prefix, since = '15m', follow = false, filter = '', format = 'short' }, onLine, onEnd) {
   assertMatch(group, LOG_GROUP_RE, 'logGroup');
@@ -236,7 +238,7 @@ function startLogs(ctx, id, { group, prefix, since = '15m', follow = false, filt
   if (follow) args.push('--follow');
 
   stopLogs(id);
-  const child = spawn('aws', args, { windowsHide: true });
+  const child = spawn(bin.resolveBin('aws'), args, { windowsHide: true });
   streams.set(id, child);
   let errBuf = '';
   let outBuf = '';
@@ -246,7 +248,7 @@ function startLogs(ctx, id, { group, prefix, since = '15m', follow = false, filt
     outBuf = lines.pop();
     if (lines.length) onLine(lines);
   });
-  child.stderr.on('data', (d) => { errBuf += d.toString('utf8'); });
+  child.stderr.on('data', (d) => { errBuf = (errBuf + d.toString('utf8')).slice(-MAX_STDERR); });
   child.on('error', (e) => onEnd({ error: e.message, code: e.code === 'ENOENT' ? 'NOT_INSTALLED' : 'ERROR' }));
   child.on('close', (code) => {
     const stopped = streams.get(id) !== child;

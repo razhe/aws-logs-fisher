@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { assertMatch, NAME_RE } = require('./aws');
+const bin = require('./bin');
 
 const ROLE_SCAN_RE = /arn:aws[a-z-]*:iam::\d{12}:role\/[A-Za-z0-9+=,.@_/-]+/g;
 const ROLE_RE = /^arn:aws[a-z-]*:iam::\d{12}:role\/[A-Za-z0-9+=,.@_/-]+$/;
@@ -18,15 +19,19 @@ function parseRoles(text) {
 
 function runCapture(args) {
   return new Promise((resolve) => {
-    cp.execFile('saml2aws', args, { windowsHide: true, timeout: TIMEOUT_MS, maxBuffer: 16 * 1024 * 1024 }, (err, stdout, stderr) => {
-      resolve({ err, stdout: String(stdout ?? ''), stderr: String(stderr ?? '') });
-    });
+    try {
+      cp.execFile(bin.resolveBin('saml2aws'), args, { windowsHide: true, timeout: TIMEOUT_MS, maxBuffer: 16 * 1024 * 1024 }, (err, stdout, stderr) => {
+        resolve({ err, stdout: String(stdout ?? ''), stderr: String(stderr ?? '') });
+      });
+    } catch (err) {
+      resolve({ err, stdout: '', stderr: '' });
+    }
   });
 }
 
 function failure(res, fallback) {
   const e = new Error((res.stderr || res.stdout || res.err?.message || fallback).trim().slice(-600));
-  e.code = res.err?.code === 'ENOENT' ? 'NOT_INSTALLED' : 'ERROR';
+  e.code = ['ENOENT', 'NOT_INSTALLED'].includes(res.err?.code) ? 'NOT_INSTALLED' : 'ERROR';
   return e;
 }
 

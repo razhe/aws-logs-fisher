@@ -27,7 +27,8 @@ function createWindow() {
 }
 
 function handle(channel, fn) {
-  ipcMain.handle(channel, async (_event, ...args) => {
+  ipcMain.handle(channel, async (event, ...args) => {
+    if (!win || event.sender !== win.webContents) return { ok: false, error: 'Origen no autorizado', code: 'DENIED' };
     try {
       return { ok: true, data: await fn(...args) };
     } catch (e) {

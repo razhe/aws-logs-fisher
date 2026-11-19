@@ -215,8 +215,7 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
   padding: 6px 0;
 }
 .log-view:empty::before { content: attr(data-placeholder); color: var(--log-muted); padding: 12px 16px; display: block; }
-.ln { position: relative; white-space: pre-wrap; word-break: break-all; padding: 0 14px 0 11px; border-left: 3px solid transparent; }
-/* Corchete guía: con una sola línea su alto queda en 0 y no se ve; aparece solo cuando el mensaje ocupa varias. */
+.ln { position: relative; white-space: pre-wrap; word-break: break-all; padding: 0 14px 0 11px; border-left: 3px solid transparent; }/* Corchete guía: con una sola línea su alto queda en 0 y no se ve; aparece solo cuando el mensaje ocupa varias. */
 .ln::before {
   content: "";
   position: absolute;
@@ -275,14 +274,16 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
 .chip button:hover { color: var(--bad); }
 
 .net-body { flex: 1; min-height: 0; overflow: auto; }
-.net-body .col-time { width: 170px; }
-.net-body .col-rule { width: 150px; }
-.net-body .col-act, .net-body td.act { width: 80px; text-align: right; vertical-align: top; }
-.net-body td { padding: 4px 12px; }
-.net-body td.msg { white-space: pre-wrap; word-break: break-all; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
-.net-body td.time { color: var(--muted); font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
-.net-body tbody tr { cursor: pointer; border-left: 3px solid var(--c, transparent); }
-.net-body tbody tr:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.cap-head, .cap-row { display: grid; grid-template-columns: 170px 150px minmax(0, 1fr) 80px; border-left: 3px solid transparent; border-bottom: 1px solid var(--border); }
+.cap-head { position: sticky; top: 0; z-index: 1; background: var(--panel); color: var(--muted); font-weight: 600; }
+.cap-head > * { padding: 7px 12px; }
+.cap-row > * { padding: 4px 12px; min-width: 0; }
+.cap-row { cursor: pointer; border-left-color: var(--c, transparent); content-visibility: auto; contain-intrinsic-block-size: auto 28px; }
+.cap-row:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.cap-row .time { color: var(--muted); font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; white-space: nowrap; }
+.cap-row .rule { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cap-row .msg { white-space: pre-wrap; word-break: break-all; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
+.cap-row .act { text-align: right; }
 .net-body .empty { color: var(--muted); padding: 14px; }
 
 .log-tab.net-min .splitter, .log-tab.net-min .rules, .log-tab.net-min .net-body { display: none; }

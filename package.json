@@ -48,6 +48,13 @@
       "assets/icon.png",
       "assets/icon-small.svg"
     ],
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    },
     "win": {
       "icon": "assets/icon.ico",
       "target": "portable",
