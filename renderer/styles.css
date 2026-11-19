@@ -215,7 +215,23 @@ th { position: sticky; top: 0; background: var(--panel); color: var(--muted); fo
   padding: 6px 0;
 }
 .log-view:empty::before { content: attr(data-placeholder); color: var(--log-muted); padding: 12px 16px; display: block; }
-.ln { white-space: pre-wrap; word-break: break-all; padding: 0 14px 0 11px; border-left: 3px solid transparent; }
+.ln { position: relative; white-space: pre-wrap; word-break: break-all; padding: 0 14px 0 11px; border-left: 3px solid transparent; }
+/* Corchete guía: con una sola línea su alto queda en 0 y no se ve; aparece solo cuando el mensaje ocupa varias. */
+.ln::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: .75em;
+  bottom: .75em;
+  width: 5px;
+  pointer-events: none;
+  opacity: .6;
+  background:
+    linear-gradient(var(--log-muted), var(--log-muted)) left / 1.5px 100% no-repeat,
+    linear-gradient(var(--log-muted), var(--log-muted)) left top / 5px 1.5px no-repeat,
+    linear-gradient(var(--log-muted), var(--log-muted)) left bottom / 5px 1.5px no-repeat;
+}
+.ln:has(> .json-block)::before { display: none; }
 .ln.hit { --c: var(--accent); border-left-color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); }
 .ln.flash { animation: flash 1.4s ease-out; }
 .ln.note { color: var(--log-muted); font-style: italic; }

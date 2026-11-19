@@ -516,10 +516,10 @@ class LogTab {
       h('label', {}, 'Desde', this.sinceSel),
       this.formatSel,
       this.filterInput,
-      h('label', {}, this.followChk, 'Seguir'),
+      h('label', { title: 'Sigue recibiendo líneas nuevas a medida que se escriben. Sin marcar, descarga solo el periodo elegido y se detiene' }, this.followChk, 'Seguir'),
       this.startBtn,
       h('button', { onclick: () => this.clearLog() }, 'Limpiar'),
-      h('label', {}, this.autoChk, 'Auto-scroll'),
+      h('label', { title: 'Mantiene la vista al final del log cuando llegan líneas nuevas. Se desmarca al subir y se vuelve a marcar al bajar hasta el final' }, this.autoChk, 'Auto-scroll'),
       this.statusEl);
 
     this.view = h('div', { class: 'log-view', 'data-placeholder': 'Escribe un log group (por ejemplo /aws/lambda/mi-funcion) y pulsa Iniciar.' });
@@ -559,8 +559,8 @@ class LogTab {
     const head = h('div', { class: 'net-head' },
       h('span', { class: 'net-title' }, 'Red de pesca'),
       this.patternInput,
-      h('label', {}, this.regexChk, 'Regex'),
-      h('label', {}, this.caseChk, 'Aa'),
+      h('label', { title: 'Interpreta el texto como expresión regular (por ejemplo status=5\\d\\d o timeout|refused)' }, this.regexChk, 'Regex'),
+      h('label', { title: 'Distingue mayúsculas y minúsculas: "Error" no capturará "ERROR"' }, this.caseChk, 'Aa'),
       h('button', { class: 'primary', onclick: () => this.addRule() }, 'Capturar'),
       this.netError,
       h('span', { class: 'spacer' }),
