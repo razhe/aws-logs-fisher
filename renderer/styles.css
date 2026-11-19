@@ -103,18 +103,49 @@ header {
   background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
+header button { white-space: nowrap; flex: none; }
+header select { max-width: 170px; }
 .brand { display: flex; align-items: center; gap: 6px; font-weight: 600; margin-right: 8px; white-space: nowrap; }
+@media (max-width: 1180px) {
+  header { gap: 8px; }
+  .brand { margin-right: 0; }
+  .brand span { display: none; }
+}
 .logo { width: 34px; height: 34px; margin: -4px 0; }
 label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); white-space: nowrap; }
 
-select, input[type="text"], input:not([type]), button {
+select, input[type="text"], input:not([type]), input[type="datetime-local"], button {
   font: inherit;
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 4px 8px;
+  min-height: 28px;
 }
+select, input[type="text"], input:not([type]), input[type="datetime-local"] { transition: border-color .12s, box-shadow .12s; }
+select:hover, input[type="text"]:hover, input:not([type]):hover, input[type="datetime-local"]:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+select:focus-visible, input[type="text"]:focus-visible, input:not([type]):focus-visible, input[type="datetime-local"]:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 28px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+select:hover { background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%), linear-gradient(135deg, var(--accent) 50%, transparent 50%); }
+select option { background: var(--panel); color: var(--text); }
+input[type="datetime-local"] { font-variant-numeric: tabular-nums; }
+input[type="datetime-local"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .65; border-radius: 4px; padding: 2px; }
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover { opacity: 1; background: color-mix(in srgb, var(--accent) 15%, transparent); }
 input[type="checkbox"] { accent-color: var(--accent); }
 button { cursor: pointer; }
 button:hover { border-color: var(--accent); }
@@ -123,7 +154,7 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button.danger { color: var(--bad); border-color: var(--bad); }
 button.link { border: 0; background: none; color: var(--accent); padding: 2px 6px; }
 
-.pill { padding: 2px 10px; border-radius: 999px; font-size: 12px; margin-left: auto; border: 1px solid var(--border); }
+.pill { padding: 2px 10px; border-radius: 999px; font-size: 12px; margin-left: auto; border: 1px solid var(--border); min-width: 0; max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-ok { color: var(--ok); border-color: var(--ok); }
 .pill-bad { color: var(--bad); border-color: var(--bad); }
 .pill-off { color: var(--muted); }

@@ -97,9 +97,10 @@ function showBanner(message, isError = false) {
 function setAuth(status) {
   const el = $('auth');
   if (status.ok) {
+    const name = identityName(status.arn);
     el.className = 'pill pill-ok';
-    el.textContent = `Sesión activa · ${status.account}`;
-    el.title = status.arn;
+    el.textContent = name ? `${name} · ${status.account}` : `Sesión activa · ${status.account}`;
+    el.title = `Sesión activa\n${status.arn}`;
     showBanner('');
     return;
   }
@@ -168,6 +169,13 @@ function setRegion(selected) {
 
 function describeRole(arn) {
   return { account: /::(\d{12}):/.exec(arn)?.[1] ?? '', name: arn.split('role/')[1] ?? arn };
+}
+
+function identityName(arn) {
+  const [, kind, rest] = /:(assumed-role|role|user)\/(.+)$/.exec(arn || '') ?? [];
+  if (!rest) return '';
+  const parts = rest.split('/');
+  return kind === 'assumed-role' ? parts[0] : parts[parts.length - 1];
 }
 
 function chooseRole(roles) {
