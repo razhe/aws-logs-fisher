@@ -4,7 +4,8 @@ const MAX_LINES = 20000;
 const TRIM_TO = 15000;
 const MAX_CAPTURED = 5000;
 const FLUSH_CHUNK = 2000;
-const RULE_COLORS = ['#e5484d', '#f5a524', '#30a46c', '#3e63dd', '#8e4ec6', '#12a594'];
+const RULE_COLORS = ['#3e63dd', '#8e4ec6', '#12a594', '#0ea5e9', '#46a758', '#a18072'];
+const LONG_LINE_CHARS = 300;
 const MIN_NET = 90;
 
 function h(tag, props = {}, ...children) {
@@ -79,6 +80,7 @@ const appendPainted = (el, text, opts) => appendParts(el, LogPaint.paint(text, o
  * Mientras está cerrado, el JSON largo se recorta a dos líneas, salvo que la línea tenga una coincidencia.
  */
 function renderLine(line, text, opts) {
+  line.classList.toggle('long', text.replace(/\s+/g, '').length >= LONG_LINE_CHARS);
   const parts = LogPaint.paint(text, opts);
   const json = JsonView.locate(text);
   if (!json) {
